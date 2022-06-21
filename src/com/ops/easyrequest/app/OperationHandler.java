@@ -101,7 +101,7 @@ public class OperationHandler {
 	}
 	
 	//To make POST request with form-data in body
-	static Map<String,String> sendRequest(String endpoint, Map<Object, Object> requestBodyData) {
+	static Map<String,String> postRequest(String endpoint, Map<Object, Object> requestData, Map<Object, Object> headerData, String requestCategory, JSONObject jsonData, String xmlData, String textData) { //requestData can be query params or even body
 		Map<String,String> mapToReturn = new HashMap<>();
 		if(endpoint == null || endpoint.isEmpty()) {
 			mapToReturn.put("Error", "No endpoint provided");
@@ -110,17 +110,34 @@ public class OperationHandler {
 		
 		try {
 			final HttpClient client = HttpClient.newBuilder().build(); //newHttpClient();
-			HttpRequest request = HttpRequest.newBuilder()
-					.POST(buildFormDataFromMap(requestBodyData))
-					.uri(URI.create(endpoint))
-					.setHeader("User-Agent", "Saswata Testing")
-	                .header("Content-Type", "application/x-www-form-urlencoded")
-	                .header("Cache-Control", "no-cache")
-					.build();
+			if(requestCategory.equalsIgnoreCase("query")) {
+				HttpRequest request = HttpRequest.newBuilder()
+						.POST(buildFormDataFromMap(requestData))
+						.uri(URI.create(endpoint))
+						.setHeader("User-Agent", "Saswata Testing")
+		                .header("Content-Type", "application/x-www-form-urlencoded")
+		                .header("Cache-Control", "no-cache")
+						.build();
+				HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+				mapToReturn.put("https_status_code", Integer.toString(response.statusCode()));
+				mapToReturn.put("Response", response.body());
+			}
+			else if(requestCategory.equalsIgnoreCase("json")) {
+				
+			}
+			else if(requestCategory.equalsIgnoreCase("xml")) {
+							
+			}
+			else if(requestCategory.equalsIgnoreCase("text")) {
+				
+			}
+			else if(requestCategory.equalsIgnoreCase("form")) {
+				
+			}
+			else if(requestCategory.equalsIgnoreCase("formencode")) {
+				
+			}
 			
-			HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-			mapToReturn.put("https_status_code", Integer.toString(response.statusCode()));
-			mapToReturn.put("Response", response.body());
 		}
 		catch (Exception e) {
 			System.out.println(e);
@@ -159,51 +176,51 @@ public class OperationHandler {
 		return mapToReturn;
 	}
 
-	static boolean requestOperation(String path, int userId, int orgId, String contentType, String requestType, String endpoint) throws IOException{
-		if (path == null || path.isEmpty()) {
-			return false;
-		}
-//		String endpoint = "https://qa.tcsion.com/HandsONExecutor/Execute";
-		String jsonString ="";
-		JSONObject jsonObject = null;
-		String transactionId = "";
-		ObjectMapper mapper = new ObjectMapper();
-		Map<String,String>map = new HashMap<>();
-		
-		try {
-			if(requestType.equalsIgnoreCase(POST_REQUEST)) {
-				map = mapper.readValue(Paths.get(path).toFile(), Map.class);
-				jsonObject = new JSONObject(map);
-				transactionId = jsonObject.getString("transactionId");
-				String jsonStringEncoded = encryptJSONObjectBase64(jsonObject);
-				System.out.println(jsonStringEncoded);
-			}
-			
-			//Creating form body data
-			Map<Object, Object> requestBodyData = new HashMap<>();
-			if (contentType.equalsIgnoreCase("application/x-www-form-urlencoded")) {
-//				requestBodyData.put("requestJSON", jsonStringEncoded);
-				requestBodyData.put("orgId", orgId);
-				requestBodyData.put("userId", userId);
-				requestBodyData.put("transactionId", transactionId);
-			}
-			
-			//Directing to method based on requestType
-			if(requestType.equalsIgnoreCase(POST_REQUEST))
-				sendRequest(endpoint,requestBodyData);
-			else if(requestType.equalsIgnoreCase(GET_REQUEST))
-				getRequest(endpoint);
-			else if(requestType.equalsIgnoreCase(DELETE_REQUEST))
-				sendRequest(endpoint,requestBodyData);
-			else if(requestType.equalsIgnoreCase(GET_REQUEST))
-				sendRequest(endpoint,requestBodyData);
-			
-		}
-		catch (Exception e) {
-			System.out.println(e);
-		}
-		return true;
-	}
+//	static boolean requestOperation(String path, int userId, int orgId, String contentType, String requestType, String endpoint) throws IOException{
+//		if (path == null || path.isEmpty()) {
+//			return false;
+//		}
+////		String endpoint = "https://qa.tcsion.com/HandsONExecutor/Execute";
+//		String jsonString ="";
+//		JSONObject jsonObject = null;
+//		String transactionId = "";
+//		ObjectMapper mapper = new ObjectMapper();
+//		Map<String,String>map = new HashMap<>();
+//		
+//		try {
+//			if(requestType.equalsIgnoreCase(POST_REQUEST)) {
+//				map = mapper.readValue(Paths.get(path).toFile(), Map.class);
+//				jsonObject = new JSONObject(map);
+//				transactionId = jsonObject.getString("transactionId");
+//				String jsonStringEncoded = encryptJSONObjectBase64(jsonObject);
+//				System.out.println(jsonStringEncoded);
+//			}
+//			
+//			//Creating form body data
+//			Map<Object, Object> requestBodyData = new HashMap<>();
+//			if (contentType.equalsIgnoreCase("application/x-www-form-urlencoded")) {
+////				requestBodyData.put("requestJSON", jsonStringEncoded);
+//				requestBodyData.put("orgId", orgId);
+//				requestBodyData.put("userId", userId);
+//				requestBodyData.put("transactionId", transactionId);
+//			}
+//			
+//			//Directing to method based on requestType
+//			if(requestType.equalsIgnoreCase(POST_REQUEST))
+//				sendRequest(endpoint,requestBodyData);
+//			else if(requestType.equalsIgnoreCase(GET_REQUEST))
+//				getRequest(endpoint);
+//			else if(requestType.equalsIgnoreCase(DELETE_REQUEST))
+//				sendRequest(endpoint,requestBodyData);
+//			else if(requestType.equalsIgnoreCase(GET_REQUEST))
+//				sendRequest(endpoint,requestBodyData);
+//			
+//		}
+//		catch (Exception e) {
+//			System.out.println(e);
+//		}
+//		return true;
+//	}
 	
 	//To build form data from a map. Useful to send data as form body and not as params
 	static HttpRequest.BodyPublisher buildFormDataFromMap(Map<Object, Object> data) {
