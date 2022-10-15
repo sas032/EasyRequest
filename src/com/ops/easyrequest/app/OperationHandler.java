@@ -1,9 +1,9 @@
 package com.ops.easyrequest.app;
 
 /**
- * 
+ *
  *	@author Saswata Mukhopadhyay
- * 
+ *
  */
 
 import java.io.IOException;
@@ -54,12 +54,13 @@ import org.apache.commons.codec.binary.Base64;
 
 
 public class OperationHandler {
-	
+
 	public static final String POST_REQUEST = "POST";
 	public static final String GET_REQUEST = "GET";
 	public static final String DELETE_REQUEST = "DELETE";
 	public static final String PATCH_REQUEST = "PATCH";
-	
+	public static final String OPTIONS_REQUEST = "OPTIONS";
+
 	public static final String CONTENT_TYPE_FORM_ENCODED = "application/x-www-form-urlencoded";
 	public static final String CONTENT_TYPE_FORM = "multipart/form-data";
 	public static final String CONTENT_TYPE_TEXT_HTML = "text/html";
@@ -68,22 +69,22 @@ public class OperationHandler {
 	public static final String CONTENT_TYPE_IMAGE = "image/jpeg";
 	public static final String CONTENT_TYPE_STREAM = "application/xml";
 	public static final String CONTENT_TYPE_BYTES = "application/octet-stream";
-	
-	
+
+
 	//Encrypt String into Base64
 	static String encryptStringBase64(String stringToEncrypt) {
 		String encryptedString = "";
 		encryptedString = new String(Base64.encodeBase64(stringToEncrypt.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8);
 		return encryptedString;
 	}
-	
+
 	//Decrypt String into Base64
 	static String decryptStringBase64(String stringTodecrypt) {
 		String decryptedString = "";
 		decryptedString = new String(Base64.decodeBase64(stringTodecrypt.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8);
 		return decryptedString;
 	}
-	
+
 	//Encrypt JSON into Base64 String
 	static String encryptJSONObjectBase64(JSONObject jsonToEncrypt) {
 		String jsonString = jsonToEncrypt.toString();
@@ -91,7 +92,7 @@ public class OperationHandler {
 		encryptedString = new String(Base64.encodeBase64(jsonString.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8);
 		return encryptedString;
 	}
-	
+
 	//Decrypt JSON into Base64 String
 	JSONObject decryptJSONObjectBase64(String jsonTodecrypt) {
 		JSONObject decryptedJSON = null;
@@ -99,7 +100,7 @@ public class OperationHandler {
 		decryptedString = new String(Base64.decodeBase64(jsonTodecrypt.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8);
 		return decryptedJSON;
 	}
-	
+
 	//To make POST request with form-data in body
 	static Map<String,String> postRequest(String endpoint, Map<Object, Object> requestData, Map<Object, Object> headerData, String requestCategory, JSONObject jsonData, String xmlData, String textData) { //requestData can be query params or even body
 		Map<String,String> mapToReturn = new HashMap<>();
@@ -107,7 +108,7 @@ public class OperationHandler {
 			mapToReturn.put("Error", "No endpoint provided");
 			return mapToReturn;
 		}
-		
+
 		try {
 			final HttpClient client = HttpClient.newBuilder().build(); //newHttpClient();
 			if(requestCategory.equalsIgnoreCase("query")) {
@@ -123,29 +124,29 @@ public class OperationHandler {
 				mapToReturn.put("Response", response.body());
 			}
 			else if(requestCategory.equalsIgnoreCase("json")) {
-				
+
 			}
 			else if(requestCategory.equalsIgnoreCase("xml")) {
-							
+
 			}
 			else if(requestCategory.equalsIgnoreCase("text")) {
-				
+
 			}
 			else if(requestCategory.equalsIgnoreCase("form")) {
-				
+
 			}
 			else if(requestCategory.equalsIgnoreCase("formencode")) {
-				
+
 			}
-			
+
 		}
 		catch (Exception e) {
 			System.out.println(e);
 		}
-		
+
 		return mapToReturn;
 	}
-	
+
 	//To make GET request with form-data in body
 	static Map<String,String> getRequest(String endpoint) {
 		Map<String,String> mapToReturn = new HashMap<>();
@@ -153,18 +154,18 @@ public class OperationHandler {
 			mapToReturn.put("Error", "No endpoint provided");
 			return mapToReturn;
 		}
-		
+
 		try {
 			final HttpClient client = HttpClient.newBuilder().build(); //newHttpClient();
 			HttpRequest request = HttpRequest.newBuilder()
 					.uri(URI.create(endpoint))
 					.build();
-			
+
 			HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 			mapToReturn.put("https_status_code", Integer.toString(response.statusCode()));
 			mapToReturn.put("Response", response.body());
 			mapToReturn.put("Headers", response.headers().toString());
-			
+
 //			System.out.println("HTTPS Status Code: "+response.statusCode());
 //			System.out.println("Response: "+response.body());
 //			System.out.println("Size: to be calculated");
@@ -172,7 +173,7 @@ public class OperationHandler {
 		catch (Exception e) {
 			System.out.println(e);
 		}
-		
+
 		return mapToReturn;
 	}
 
@@ -186,7 +187,7 @@ public class OperationHandler {
 //		String transactionId = "";
 //		ObjectMapper mapper = new ObjectMapper();
 //		Map<String,String>map = new HashMap<>();
-//		
+//
 //		try {
 //			if(requestType.equalsIgnoreCase(POST_REQUEST)) {
 //				map = mapper.readValue(Paths.get(path).toFile(), Map.class);
@@ -195,7 +196,7 @@ public class OperationHandler {
 //				String jsonStringEncoded = encryptJSONObjectBase64(jsonObject);
 //				System.out.println(jsonStringEncoded);
 //			}
-//			
+//
 //			//Creating form body data
 //			Map<Object, Object> requestBodyData = new HashMap<>();
 //			if (contentType.equalsIgnoreCase("application/x-www-form-urlencoded")) {
@@ -204,7 +205,7 @@ public class OperationHandler {
 //				requestBodyData.put("userId", userId);
 //				requestBodyData.put("transactionId", transactionId);
 //			}
-//			
+//
 //			//Directing to method based on requestType
 //			if(requestType.equalsIgnoreCase(POST_REQUEST))
 //				sendRequest(endpoint,requestBodyData);
@@ -214,14 +215,14 @@ public class OperationHandler {
 //				sendRequest(endpoint,requestBodyData);
 //			else if(requestType.equalsIgnoreCase(GET_REQUEST))
 //				sendRequest(endpoint,requestBodyData);
-//			
+//
 //		}
 //		catch (Exception e) {
 //			System.out.println(e);
 //		}
 //		return true;
 //	}
-	
+
 	//To build form data from a map. Useful to send data as form body and not as params
 	static HttpRequest.BodyPublisher buildFormDataFromMap(Map<Object, Object> data) {
         var builder = new StringBuilder();
@@ -235,7 +236,7 @@ public class OperationHandler {
         }
         return HttpRequest.BodyPublishers.ofString(builder.toString());
     }
-	
+
 	static void test() {
         System.out.println("working");
     }
