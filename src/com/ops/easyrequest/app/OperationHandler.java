@@ -180,7 +180,7 @@ public class OperationHandler {
 //		if (path == null || path.isEmpty()) {
 //			return false;
 //		}
-////		String endpoint = "https://qa.tcsion.com/HandsONExecutor/Execute";
+////		String endpoint = "";
 //		String jsonString ="";
 //		JSONObject jsonObject = null;
 //		String transactionId = "";
