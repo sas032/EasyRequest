@@ -693,6 +693,63 @@ public class Application extends JFrame {
 			else if(requestTypeSelected.equalsIgnoreCase(ophandler.DELETE_REQUEST)) {
 				receivedFromHitMethod = ophandler.deleteRequest(endPointToHit);
 			}
+			else if (requestTypeSelected.equalsIgnoreCase(ophandler.PUT_REQUEST)) {
+
+				int totalTableRows = queryParamValueDataTable.getRowCount();
+				//Map to store table data values as key value pair for query
+				Map<Object,Object>requestMap = new HashMap<>();
+				for(int i=0;i<totalTableRows;i++) {
+					requestMap.put((String)queryParamValueDataTable.getValueAt(i, 0), (String)queryParamValueDataTable.getValueAt(i, 1));
+				}
+
+
+				//Map to store header
+				Map<Object,Object>headerMap = new HashMap<>();
+				for(int i=0;i<totalTableRows;i++) {
+					headerMap.put((String)headerValueDataTable.getValueAt(i, 0), (String)headerValueDataTable.getValueAt(i, 1));
+				}
+
+				JSONObject jsonData = new JSONObject();
+				String xmlData = "";
+				String textData = "";
+				if(rdbtnQueryInput.isSelected()) {
+					receivedFromHitMethod = ophandler.putRequest(endPointToHit,requestMap,headerMap,"query",jsonData,xmlData,textData);
+				}
+				else if(btnBodyJSON.isSelected()) {
+					String json = jsonEditorPane.getText();
+					try {
+						jsonData = new ObjectMapper().readValue(json, JSONObject.class);
+					} catch (JsonMappingException e1) {
+						e1.printStackTrace();
+					} catch (JsonProcessingException e1) {
+						e1.printStackTrace();
+					}
+					receivedFromHitMethod = ophandler.putRequest(endPointToHit,requestMap,headerMap,"json",jsonData,xmlData,textData);
+				}
+				else if(btnBodyXml.isSelected()) {
+					xmlData = xmlEditorPane.getText();
+					receivedFromHitMethod = ophandler.putRequest(endPointToHit,requestMap,headerMap,"xml",jsonData,xmlData,textData);
+				}
+				else if(btnBodyText.isSelected()) {
+					textData = textEditorPane.getText();
+					receivedFromHitMethod = ophandler.putRequest(endPointToHit,requestMap,headerMap,"text",jsonData,xmlData,textData);
+				}
+				else if(btnBodyForm.isSelected()) {
+					//Map to store form table data values as key value pair
+					Map<Object,Object>requestFormMap = new HashMap<>();
+					for(int i=0;i<totalTableRows;i++) {
+						requestFormMap.put((String)bodyFormValueDataTable.getValueAt(i, 0), (String)bodyFormValueDataTable.getValueAt(i, 1));
+					}
+					receivedFromHitMethod = ophandler.putRequest(endPointToHit,requestFormMap,headerMap,"form",jsonData,xmlData,textData);
+				}
+				else if(btnBodyFormEncode.isSelected()) {
+					Map<Object,Object>requestFormEncodeMap = new HashMap<>();
+					for(int i=0;i<totalTableRows;i++) {
+						requestFormEncodeMap.put((String)bodyFormEncodeValueDataTable.getValueAt(i, 0), (String)bodyFormEncodeValueDataTable.getValueAt(i, 1));
+					}
+					receivedFromHitMethod = ophandler.putRequest(endPointToHit,requestFormEncodeMap,headerMap,"formencode",jsonData,xmlData,textData);
+				}
+			}
 
 //			Parsing the output received from hitting the endpoint
 			//Showing HTTPS Status irrespective of what output radio option is selected if there is no error

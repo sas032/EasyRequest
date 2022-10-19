@@ -204,6 +204,52 @@ public class OperationHandler {
 		return mapToReturn;
 	}
 
+	//To make POST request with form-data in body
+	static Map<String,String> putRequest(String endpoint, Map<Object, Object> requestData, Map<Object, Object> headerData, String requestCategory, JSONObject jsonData, String xmlData, String textData) { //requestData can be query params or even body
+		Map<String,String> mapToReturn = new HashMap<>();
+		if(endpoint == null || endpoint.isEmpty()) {
+			mapToReturn.put("Error", "No endpoint provided");
+			return mapToReturn;
+		}
+
+		try {
+			final HttpClient client = HttpClient.newBuilder().build(); //newHttpClient();
+			if(requestCategory.equalsIgnoreCase("query")) {
+				HttpRequest request = HttpRequest.newBuilder()
+						.PUT(buildFormDataFromMap(requestData))
+						.uri(URI.create(endpoint))
+						.setHeader("User-Agent", "Saswata Testing")
+		                .header("Content-Type", "application/x-www-form-urlencoded")
+		                .header("Cache-Control", "no-cache")
+						.build();
+				HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+				mapToReturn.put("https_status_code", Integer.toString(response.statusCode()));
+				mapToReturn.put("Response", response.body());
+			}
+			else if(requestCategory.equalsIgnoreCase("json")) {
+
+			}
+			else if(requestCategory.equalsIgnoreCase("xml")) {
+
+			}
+			else if(requestCategory.equalsIgnoreCase("text")) {
+
+			}
+			else if(requestCategory.equalsIgnoreCase("form")) {
+
+			}
+			else if(requestCategory.equalsIgnoreCase("formencode")) {
+
+			}
+
+		}
+		catch (Exception e) {
+			System.out.println(e);
+		}
+
+		return mapToReturn;
+	}
+
 //	static boolean requestOperation(String path, int userId, int orgId, String contentType, String requestType, String endpoint) throws IOException{
 //		if (path == null || path.isEmpty()) {
 //			return false;
