@@ -750,6 +750,9 @@ public class Application extends JFrame {
 					receivedFromHitMethod = ophandler.putRequest(endPointToHit,requestFormEncodeMap,headerMap,"formencode",jsonData,xmlData,textData);
 				}
 			}
+			else if(requestTypeSelected.equalsIgnoreCase(ophandler.OPTIONS_REQUEST)) {
+				receivedFromHitMethod = ophandler.optionsRequest(endPointToHit);
+			}
 
 //			Parsing the output received from hitting the endpoint
 			//Showing HTTPS Status irrespective of what output radio option is selected if there is no error

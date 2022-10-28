@@ -204,7 +204,7 @@ public class OperationHandler {
 		return mapToReturn;
 	}
 
-	//To make POST request with form-data in body
+	//To make PUT request with form-data in body
 	static Map<String,String> putRequest(String endpoint, Map<Object, Object> requestData, Map<Object, Object> headerData, String requestCategory, JSONObject jsonData, String xmlData, String textData) { //requestData can be query params or even body
 		Map<String,String> mapToReturn = new HashMap<>();
 		if(endpoint == null || endpoint.isEmpty()) {
@@ -242,6 +242,33 @@ public class OperationHandler {
 
 			}
 
+		}
+		catch (Exception e) {
+			System.out.println(e);
+		}
+
+		return mapToReturn;
+	}
+
+	//To make OPTIONS request.
+	static Map<String,String> optionsRequest(String endpoint) {
+		Map<String,String> mapToReturn = new HashMap<>();
+		if(endpoint == null || endpoint.isEmpty()) {
+			mapToReturn.put("Error", "No endpoint provided");
+			return mapToReturn;
+		}
+
+		try {
+			final HttpClient client = HttpClient.newBuilder().build(); //newHttpClient();
+			HttpRequest request = HttpRequest.newBuilder()
+					.OPTIONS()
+					.uri(URI.create(endpoint))
+					.build();
+
+			HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+			mapToReturn.put("https_status_code", Integer.toString(response.statusCode()));
+			mapToReturn.put("Response", response.body());
+			mapToReturn.put("Headers", response.headers().toString());
 		}
 		catch (Exception e) {
 			System.out.println(e);
